@@ -1,0 +1,11 @@
+# --- Mac Os ---
+# Mac Os Desktop Services Store.
+.DS_Store
+
+# --- Xcode project files. ---
+# Xcode User Data (local developer user data)
+*.xcuserdata/
+xcuserdata/
+
+# --- Virtual environment files ---
+*Job Seek/env/
