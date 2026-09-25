@@ -13,7 +13,8 @@ Created: 23/sep/2026
 # Third Party Libraries.
 
 # Self Built Modules.
+from View.CLI import MainLoop
 
 if __name__ == "__main__":
-    print("Hello")
+    MainLoop()
     pass

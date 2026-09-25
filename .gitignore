@@ -9,3 +9,13 @@ xcuserdata/
 
 # --- Virtual environment files ---
 *Job Seek/env/
+
+# --- User credentials ---
+Job Seek/Keys/
+
+# --- Visual studio code settings ---
+.vscode/settings.json
+
+# --- Python temporal files ---
+# Pycache
+*__pycache__/
