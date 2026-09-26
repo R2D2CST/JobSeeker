@@ -4,7 +4,7 @@ Job Seeker
 
 Created by: R2D2CST
 
-Created: 23/sep/2026
+Created: 25/sep/2026
 
 """
 
@@ -13,11 +13,9 @@ Created: 23/sep/2026
 # Third Party Libraries.
 
 # Self Built Modules.
-from View.CLI import CommandLineInterface
+from View.CLI import runAllCliTests
 
 if __name__ == "__main__":
-    cli = CommandLineInterface()
-    cli.start()
-
+    runAllCliTests()
 
     pass
