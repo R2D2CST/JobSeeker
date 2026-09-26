@@ -15,7 +15,11 @@ Created: 25/sep/2026
 # Self Built Modules.
 from View.CLI import runAllCliTests
 
+from Model.Persistor import runPersistenceTestSuite
+
 if __name__ == "__main__":
     runAllCliTests()
+
+    runPersistenceTestSuite()
 
     pass

@@ -16,6 +16,8 @@ from unittest.mock import patch
 from colorama import init
 
 # Self Built Modules.
+from ModelView.ModelView import ModelView
+
 from View.AppStyle import (
     SUCCESS,
     ERROR,
@@ -34,6 +36,15 @@ from View.AppStyle import (
 class CommandLineInterface:
 
     def __init__(self):
+        """
+        Starts the main elements required for this class in order to work.
+        Args:
+            None
+        Returns:
+            None
+        Raises:
+            None
+        """
         # Starts colorama color and style modifier.
         init()
 
@@ -43,9 +54,13 @@ class CommandLineInterface:
         self.validTrue: list[str] = ["true", "t", "1"]
         self.validFalse: list[str] = ["false", "f", "0"]
 
+        # Initializes model view object.
+        self.modelView = ModelView()
+
         # Main menu options.
         self.mainMenuOptions: list[str] = [
             "Exit.",
+            "Modify user keys.",
         ]
 
         pass
@@ -64,18 +79,33 @@ class CommandLineInterface:
             None
         """
 
-        self._MainLoop()
+        self._mainLoop()
 
+        pass
+
+    def _applicationHeader(self):
+        "Starts the application header."
+        print(f"{BANNER}{60*"="}{STYLE_RESET}")
+        print(
+            f"{BANNER}|{17*" "}{self.modelView.APP_NAME} Version:{self.modelView.APP_VERSION}{17*" "}|{STYLE_RESET}"
+        )
+        print(f"{BANNER}{60*"="}{STYLE_RESET}")
         pass
 
     # * Interface loop methods.
 
-    def _MainLoop(self):
+    def _mainLoop(self):
         while True:
+
+            self._applicationHeader()
+
+            # Input request.
             for number, option in enumerate(self.mainMenuOptions):
                 print(f"{BOLD_TEXT}{number}.- {TEXT}{option}")
             response = self._integerInput()
-            if response == 0:
+
+            # * Exit Application Selection
+            if response == 0:  # Exit.
                 break
             continue
         pass
