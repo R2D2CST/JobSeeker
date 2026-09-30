@@ -251,20 +251,20 @@ class PersistenceManager:
 
         # * Persistent object mapping.
         self.formatMap: Dict[str, BasePersister] = {
-            "json": self.jsonPersister,
-            "txt": self.textPersister,
-            "csv": self.csvPersister,
-            "log": self.logPersister,
-            "md": self.markdownPersister,
+            ".json": self.jsonPersister,
+            ".txt": self.textPersister,
+            ".csv": self.csvPersister,
+            ".log": self.logPersister,
+            ".md": self.markdownPersister,
         }
 
         # * Valid persistent formats mapping.
         self.dataStructuresMap: Dict[str, str] = {
-            "json": "Dict[str:Any]",
-            "txt": "str",
-            "csv": "List[List[Any]]",
-            "log": "str",
-            "md": "str",
+            ".json": "Dict[str:Any]",
+            ".txt": "str",
+            ".csv": "List[List[Any]]",
+            ".log": "str",
+            ".md": "str",
         }
         return None
 

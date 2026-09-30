@@ -17,6 +17,7 @@ from colorama import init
 
 # Self Built Modules.
 from ModelView.ModelView import ModelView
+from ModelView.KeyManagerModelView import KeyManagerModelView
 
 from View.AppStyle import (
     SUCCESS,
@@ -54,13 +55,22 @@ class CommandLineInterface:
         self.validTrue: list[str] = ["true", "t", "1"]
         self.validFalse: list[str] = ["false", "f", "0"]
 
-        # Initializes model view object.
+        # Initializes model view objects.
         self.modelView = ModelView()
+        self.keyManager = KeyManagerModelView()
 
         # Main menu options.
-        self.mainMenuOptions: list[str] = [
+        self.mainMenuMap: list[str] = [
             "Exit.",
             "Modify user keys.",
+        ]
+
+        # Modify user keys options
+        self.modifyUserKeysMap: list[str] = [
+            "Return to main menu.",
+            "Build new key.",
+            "Modify existing key.",
+            "Delete existing key.",
         ]
 
         pass
@@ -79,11 +89,11 @@ class CommandLineInterface:
             None
         """
 
-        self._mainLoop()
+        self.__mainLoop()
 
         pass
 
-    def _applicationHeader(self):
+    def __applicationHeader(self):
         "Starts the application header."
         print(f"{BANNER}{60*"="}{STYLE_RESET}")
         print(
@@ -94,25 +104,80 @@ class CommandLineInterface:
 
     # * Interface loop methods.
 
-    def _mainLoop(self):
+    def __mainLoop(self):
+
+        self.__applicationHeader()
+
         while True:
 
-            self._applicationHeader()
+            print(f"{HEADER_STYLE}Main menu options:{STYLE_RESET}")
 
             # Input request.
-            for number, option in enumerate(self.mainMenuOptions):
+            for number, option in enumerate(self.mainMenuMap):
                 print(f"{BOLD_TEXT}{number}.- {TEXT}{option}")
-            response = self._integerInput()
+            response = self.__integerInput()
 
-            # * Exit Application Selection
+            # * Exit application selection.
             if response == 0:  # Exit.
                 break
+
+            # * Modify user keys selection.
+            elif response == 1:  # Modify user keys.
+                self.__modifyUserKeys()
+                continue
+
+            continue
+        pass
+
+    def __modifyUserKeys(self):
+        while True:
+
+            print(f"{SUB_HEADER_STYLE}Modify user keys options:{STYLE_RESET}")
+
+            for number, option in enumerate(self.modifyUserKeysMap):
+                print(f"{BOLD_TEXT}{number}.- {TEXT}{option}")
+            response = self.__integerInput()
+
+            # * Exit loop and return to main menu.
+            if response == 0:  # Exit.
+                break
+
+            # * Build new key.
+            elif response == 1:  # Build new key.
+                domain = self.__stringInput(
+                    promptMessage=f"{PROMPT}Please type the domain (url) for the new key:{STYLE_RESET}"
+                )
+                username = self.__stringInput(
+                    promptMessage=f"{PROMPT}Please type a username:{STYLE_RESET}"
+                )
+                password = self.__stringInput(
+                    promptMessage=f"{PROMPT}Please type a password:{STYLE_RESET}"
+                )
+
+                try:
+                    self.keyManager.buildNewKey(
+                        domain=domain,
+                        username=username,
+                        password=password,
+                    )
+                except Exception as e:
+                    print(f"{ERROR}Error: {e}{STYLE_RESET}")
+                continue
+
+            # * Modify existing key.
+            elif response == 2:  # Modify existing key.
+                continue
+
+            # * Delete existing key.
+            elif response == 3:  # Delete existing key.
+                continue
+
             continue
         pass
 
     # * User input methods.
 
-    def _stringInput(
+    def __stringInput(
         self, promptMessage: str = "Enter text: ", allowEmpty: bool = False
     ) -> str:
         """
@@ -141,7 +206,7 @@ class CommandLineInterface:
         # While finish
         pass
 
-    def _integerInput(self, promptMessage: str = "Enter an integer number: ") -> int:
+    def __integerInput(self, promptMessage: str = "Enter an integer number: ") -> int:
         """
         Captures an integer input from the user.
 
@@ -170,7 +235,7 @@ class CommandLineInterface:
         # While finish
         pass
 
-    def _boolInput(self, promptMessage: str = "Enter boolean (True/False): ") -> bool:
+    def __boolInput(self, promptMessage: str = "Enter boolean (True/False): ") -> bool:
         """
         Captures a boolean representation from the user.
 
@@ -201,7 +266,7 @@ class CommandLineInterface:
         # While finish
         pass
 
-    def _yesNoInput(self, promptMessage: str = "Proceed? (Yes/No): ") -> bool:
+    def __yesNoInput(self, promptMessage: str = "Proceed? (Yes/No): ") -> bool:
         """
         Captures a Yes/No confirmation from the user.
 
