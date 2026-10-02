@@ -23,6 +23,7 @@ from urllib.parse import (
 )
 import sys
 import os
+from pathlib import Path
 from typing import (
     Tuple,
     List,
@@ -32,6 +33,8 @@ import re
 # Third Party Libraries.
 
 # Self Built Modules.
+
+# * --- System and App Functions ---
 
 
 def getAppPath() -> str:
@@ -58,6 +61,71 @@ def getAppPath() -> str:
         """
     # Returns the script directory.
     return scriptDirectory
+
+
+def getFileList(directory: str | Path) -> List[str]:
+    """Retrieves a list of absolute file paths contained within a specified directory.
+
+    This function recursively iterates through the target directory, filter
+    out subdirectories and temporary files (such as hidden files or swap
+    files).
+
+    Args:
+        directory (str | Path): The target filesystem path to inspect.
+
+    Raises:
+        FileNotFoundError: If the specified directory path does not exist on the filesystem.
+        NotADirectoryError: If the provided path exists but points to a file instead of a directory.
+        PermissionError: If the process lacks necessary read or execute permissions for the directory.
+        TypeError: If the directory argument is neither a string nor a Path instance.
+
+    Returns:
+        List[str]: A list of string representations of absolute file paths excluding temporary files and directories.
+    """
+    if not isinstance(directory, (str, Path)):
+        raise TypeError(
+            f"Expected directory to be str or Path, got {type(directory).__name__}"
+        )
+
+    targetPath: Path = (
+        directory if isinstance(directory, Path) else Path(directory)
+    )
+
+    if not targetPath.exists():
+        raise FileNotFoundError(
+            f"Could not find the specified path: {targetPath}"
+        )
+
+    if not targetPath.is_dir():
+        raise NotADirectoryError(
+            f"The provided path is not a directory: {targetPath}"
+        )
+
+    fileList: List[str] = []
+
+    try:
+        for entryPath in targetPath.rglob("*"):
+            if entryPath.is_file():
+                fileName: str = entryPath.name
+                # Exclude common temporary, swap, and system files
+                isTemporary: bool = (
+                    fileName.startswith(".")
+                    or fileName.startswith("~$")
+                    or fileName.endswith(".tmp")
+                    or fileName.endswith("~")
+                )
+                if not isTemporary:
+                    fileList.append(str(entryPath.resolve()))
+    except PermissionError as error:
+        raise PermissionError(
+            f"Permission denied while accessing directory content: {targetPath}"
+        ) from error
+
+    return fileList
+
+
+
+# * --- Information Validation ---
 
 
 def stringValidation(
@@ -125,6 +193,35 @@ def stringValidation(
 
     isValid = len(failReasons) == 0
     return isValid, failReasons
+
+
+def validateWhitespace(stringInput: str) -> bool:
+    """Evaluates whether a string is empty, whitespace, or contains control characters.
+
+    This function checks if the input string is empty ("") or consists solely of
+    whitespace characters, including spaces, tabs ('\\t'), carriage returns ('\\r'),
+    and newlines ('\\n').
+
+    Args:
+        stringInput (str): The input string to be evaluated.
+
+    Returns:
+        bool: True if stringInput is empty or contains only whitespace/control
+        characters ('\\n', '\\t', '\\r', ' '); False otherwise.
+
+    Examples:
+        >>> validateWhitespace("")
+        True
+        >>> validateWhitespace("   ")
+        True
+        >>> validateWhitespace("\\n\\t")
+        True
+        >>> validateWhitespace("\\n hello \\t")
+        False
+    """
+    return not stringInput or not stringInput.strip()
+
+# * --- Uniform Resource Locator (URL) Functions ---
 
 
 def URLValidation(urlString: str) -> Tuple[bool, List[str]]:

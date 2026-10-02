@@ -135,7 +135,7 @@ class CommandLineInterface:
             print(f"{SUB_HEADER_STYLE}Modify user keys options:{STYLE_RESET}")
 
             for number, option in enumerate(self.modifyUserKeysMap):
-                print(f"{BOLD_TEXT}{number}.- {TEXT}{option}")
+                print(f"{BOLD_TEXT}{number}.- {TEXT}{option}{STYLE_RESET}")
             response = self.__integerInput()
 
             # * Exit loop and return to main menu.
@@ -166,6 +166,41 @@ class CommandLineInterface:
 
             # * Modify existing key.
             elif response == 2:  # Modify existing key.
+                storedKeys = self.keyManager.displayKeysList()
+
+                if len(storedKeys) == 0:
+                    print(f"{ERROR}Error: No key found{STYLE_RESET}")
+                    input(f"{BOLD_TEXT}Press [Enter] to continue.{STYLE_RESET}")
+                    continue
+
+                for number, key in enumerate(storedKeys):
+                    print(f"{BOLD_TEXT}{number}.- {TEXT}{key}.{STYLE_RESET}")
+
+                keyPosition = self.__integerInput()
+
+                if keyPosition > len(storedKeys):
+                    print(f"{ERROR}Error: Invalid option.{STYLE_RESET}")
+                    input(f"{BOLD_TEXT}Press [Enter] to continue.{STYLE_RESET}")
+                    continue
+                domain = self.__stringInput(
+                    promptMessage=f"{PROMPT}Please type the domain (url) for the new key (If this is correct press [Enter]):{STYLE_RESET}"
+                )
+                username = self.__stringInput(
+                    promptMessage=f"{PROMPT}Please type a username (If this is correct press [Enter]):{STYLE_RESET}"
+                )
+                password = self.__stringInput(
+                    promptMessage=f"{PROMPT}Please type a password (If this is correct press [Enter]):{STYLE_RESET}"
+                )
+
+                try:
+                    self.keyManager.modifyExistingKey(
+                        keyPosition=keyPosition,
+                        domain=domain,
+                        username=username,
+                        password=password,
+                    )
+                except Exception as e:
+                    print(f"{ERROR}Error: {e}{STYLE_RESET}")
                 continue
 
             # * Delete existing key.

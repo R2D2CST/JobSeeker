@@ -26,6 +26,8 @@ from Model.Constants import (
 
 from Model.Functions import (
     stringValidation,
+    validateWhitespace,
+    getFileList,
     URLValidation,
     extractURLDomain,
 )
@@ -96,8 +98,59 @@ class KeyManagerModelView:
             raise FileNotFoundError("Persistence processing errors occur.")
         return None
 
-    def modifyExistingKey():
+    @staticmethod
+    def displayKeysList() -> List[str]:
+        """Retrieves and processes the list of available key file names.
+
+        This method fetches all valid file paths from the configured keys
+        directory and strips both the absolute path and file extension,
+        returning only the base key identifiers formatted for UI display.
+
+        Returns:
+            List[str]: A list of clean key names without paths or extensions.
+        """
+        keyList: List[str] = getFileList(directory=KEYS_DIRECTORY)
+
+        cleanedKeyList: List[str] = [Path(keyPath).stem for keyPath in keyList]
+
+        return cleanedKeyList
+
+    def modifyExistingKey(
+        self,
+        keyPosition: int,
+        domain: str,
+        username: str,
+        password: str,
+    ):
         "Modify existing key."
+
+        # Get list of keys stored.
+        keysList = getFileList(directory=KEYS_DIRECTORY)
+        targetKey = keysList[keyPosition]
+
+        content:Dict[str:str] = self.persister.processRead(filePath=targetKey)
+
+        oldDomain = content.get("Domain:")
+        oldUsername = content.get("Username:")
+        oldPassword = content.get("Password:")
+
+        if validateWhitespace(domain):
+            newDomain = oldDomain
+        else:
+            newDomain = domain
+
+        if validateWhitespace(username):
+            newUsername = oldUsername
+        else:
+            newUsername = username
+
+        if validateWhitespace(password):
+            newPassword = oldPassword
+        else:
+            newPassword = password
+
+        self.buildNewKey(domain=newDomain, username=newUsername, password=newPassword)
+
         pass
 
     def deleteExistingKey():
